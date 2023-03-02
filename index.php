@@ -3,9 +3,10 @@ require_once "secrets.php";
 
 if (@$_POST["promptSubmit"]) {
 
-  $url = 'https://api.openai.com/v1/completions';
+  $url = 'https://api.openai.com/v1/chat/completions';
   $data = [
-    "model" => "text-ada-001",
+    "model" => "gpt-3.5-turbo",
+    "messages" =>[[ "role" => "user", "content" => $prompt]],
     "prompt" => @$_POST["prompt"],
     "max_tokens" => 35,
     "temperature" => 1
@@ -30,7 +31,7 @@ if (@$_POST["promptSubmit"]) {
     echo 'cURL error: ' . curl_error($ch);
   } else {
     $response = json_decode($response, true);
-    $text = $response["choices"][0]["text"];
+    $text = $response["choices"][0]["message"]["content"];
   }
 
   curl_close($ch);
@@ -65,39 +66,3 @@ if (@$_POST["promptSubmit"]) {
 </html>
 
 <?php
-
-/*
-https://api.openai.com/v1/completions
-POST
-Headers
-Content-Type: application/json
-Authorization: Bearer TOKEN
-Request body
-{
-  "model": "text-ada-001",
-  "prompt": "Say this is a test",
-  "max_tokens": 7,
-  "temperature": 0
-}
-Response Body
-{
-    "id": "cmpl-6kC2GJ87vF0dVAUXcae4oQC92lMI5",
-    "object": "text_completion",
-    "created": 1676467372,
-    "model": "text-ada-001",
-    "choices": [
-        {
-            "text": "\n\nWhat is your name?",
-            "index": 0,
-            "logprobs": null,
-            "finish_reason": "length"
-        }
-    ],
-    "usage": {
-        "prompt_tokens": 5,
-        "completion_tokens": 7,
-        "total_tokens": 12
-    }
-}
-
-*/
